@@ -1,5 +1,5 @@
 {
-    "name": "omniphx/forrest",
+    "name": "fluentgroup/fg-salesforce",
     "description": "A Laravel library for Salesforce",
     "license": "MIT",
     "keywords": [
