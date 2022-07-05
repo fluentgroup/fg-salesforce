@@ -66,7 +66,7 @@ abstract class BaseServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__.'/../../../config/config.php' => $this->getConfigPath(),
+            __DIR__ . '/../../../config/config.php' => $this->getConfigPath(),
         ]);
     }
 
@@ -80,109 +80,42 @@ abstract class BaseServiceProvider extends ServiceProvider
         $this->app->singleton('forrest', function ($app) {
 
             // Config options
-            $settings           = config('forrest');
-            $storageType        = config('forrest.storage.type');
-            $authenticationType = config('forrest.authentication');
+            $settings = config('forrest');
+            $storageType = config('forrest.storage.type');
+
 
             // Dependencies
-            $httpClient    = $this->getClient();
-            $input     = new LaravelInput(app('request'));
-            $event     = new LaravelEvent(app('events'));
+            $httpClient = $this->getClient();
+            $input = new LaravelInput(app('request'));
+            $event = new LaravelEvent(app('events'));
             $encryptor = new LaravelEncryptor(app('encrypter'));
-            $redirect  = $this->getRedirect();
-            $storage   = $this->getStorage($storageType);
+            $redirect = $this->getRedirect();
+            $storage = $this->getStorage($storageType);
 
             $refreshTokenRepo = new RefreshTokenRepository($encryptor, $storage);
-            $tokenRepo        = new TokenRepository($encryptor, $storage);
-            $resourceRepo     = new ResourceRepository($storage);
-            $versionRepo      = new VersionRepository($storage);
-            $instanceURLRepo  = new InstanceURLRepository($tokenRepo, $settings);
-            $stateRepo        = new StateRepository($storage);
+            $tokenRepo = new TokenRepository($encryptor, $storage);
+            $resourceRepo = new ResourceRepository($storage);
+            $versionRepo = new VersionRepository($storage);
+            $instanceURLRepo = new InstanceURLRepository($tokenRepo, $settings);
+            $stateRepo = new StateRepository($storage);
 
             $formatter = new JSONFormatter($tokenRepo, $settings);
 
-            switch ($authenticationType) {
-                case 'OAuthJWT':
-                    $forrest = new OAuthJWT(
-                        $httpClient,
-                        $encryptor,
-                        $event,
-                        $input,
-                        $redirect,
-                        $instanceURLRepo,
-                        $refreshTokenRepo,
-                        $resourceRepo,
-                        $stateRepo,
-                        $tokenRepo,
-                        $versionRepo,
-                        $formatter,
-                        $settings);
-                    break;
-                case 'WebServer':
-                    $forrest = new WebServer(
-                        $httpClient,
-                        $encryptor,
-                        $event,
-                        $input,
-                        $redirect,
-                        $instanceURLRepo,
-                        $refreshTokenRepo,
-                        $resourceRepo,
-                        $stateRepo,
-                        $tokenRepo,
-                        $versionRepo,
-                        $formatter,
-                        $settings);
-                    break;
-                case 'UserPassword':
-                    $forrest = new UserPassword(
-                        $httpClient,
-                        $encryptor,
-                        $event,
-                        $input,
-                        $redirect,
-                        $instanceURLRepo,
-                        $refreshTokenRepo,
-                        $resourceRepo,
-                        $stateRepo,
-                        $tokenRepo,
-                        $versionRepo,
-                        $formatter,
-                        $settings);
-                    break;
-                case 'UserPasswordSoap':
-                    $forrest = new UserPasswordSoap(
-                        $httpClient,
-                        $encryptor,
-                        $event,
-                        $input,
-                        $redirect,
-                        $instanceURLRepo,
-                        $refreshTokenRepo,
-                        $resourceRepo,
-                        $stateRepo,
-                        $tokenRepo,
-                        $versionRepo,
-                        $formatter,
-                        $settings);
-                    break;
-                default:
-                    $forrest = new WebServer(
-                        $httpClient,
-                        $encryptor,
-                        $event,
-                        $input,
-                        $redirect,
-                        $instanceURLRepo,
-                        $refreshTokenRepo,
-                        $resourceRepo,
-                        $stateRepo,
-                        $tokenRepo,
-                        $versionRepo,
-                        $formatter,
-                        $settings);
-                    break;
-            }
+            $forrest = new UserPassword(
+                $httpClient,
+                $encryptor,
+                $event,
+                $input,
+                $redirect,
+                $instanceURLRepo,
+                $refreshTokenRepo,
+                $resourceRepo,
+                $stateRepo,
+                $tokenRepo,
+                $versionRepo,
+                $formatter,
+                $storage,
+                $settings);
 
             return $forrest;
         });

@@ -7,28 +7,8 @@ return [
     /*
      * Options include WebServer, UserPassword, UserPasswordSoap, and OAuthJWT
      */
-    'authentication' => env('SF_AUTH_METHOD', 'WebServer'),
+    'authentication' => 'UserPassword',
 
-    /*
-     * Enter your credentials
-     * Username and Password are only necessary for UserPassword & UserPasswordSoap flows.
-     * Likewise, callbackURI is only necessary for WebServer flow.
-     * OAuthJWT requires a key, username, and private key (SF_CONSUMER_SECRET)
-     */
-    'credentials'    => [
-        //Required:
-        'consumerKey'    => env('SF_CONSUMER_KEY'),
-        'consumerSecret' => env('SF_CONSUMER_SECRET'),
-        'callbackURI'    => env('SF_CALLBACK_URI'),
-        'loginURL'       => env('SF_LOGIN_URL'),
-
-        // Only required for UserPassword authentication:
-        'username'       => env('SF_USERNAME'),
-        // Security token might need to be ammended to password unless IP Address is whitelisted
-        'password'       => env('SF_PASSWORD'),
-        // Only required for OAuthJWT authentication:
-        'privateKey'     => '',
-    ],
 
     /*
      * These are optional authentication parameters that can be specified for the WebServer flow.
@@ -65,9 +45,9 @@ return [
      * instance and will persist as long as the object remains in memory.
      */
     'storage'        => [
-        'type'          => 'session', // Options include: 'session', 'cache', 'object'
+        'type'          => 'cache', // Options include: 'session', 'cache', 'object'
         'path'          => 'forrest_', // unique storage path to avoid collisions
-        'expire_in'     => 3600, // number of seconds to expire cache/session
+        'expire_in'     => 7000, // number of seconds to expire cache/session
         'store_forever' => false, // never expire cache/session
     ],
 

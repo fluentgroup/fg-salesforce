@@ -33,15 +33,6 @@ class ForrestServiceProvider extends BaseServiceProvider
 
     protected function getStorage($storageType)
     {
-        switch ($storageType) {
-            case 'session':
-                return new LaravelSession(app('config'), app('request')->session());
-            case 'cache':
-                return new LaravelCache(app('config'), app('cache')->store());
-            case 'object':
-                return new ObjectStorage();
-            default:
-                return new LaravelSession(app('config'), app('request')->session());
-        }
+        return new LaravelCache(app('config'));
     }
 }

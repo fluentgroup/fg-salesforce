@@ -3,18 +3,41 @@
 namespace Omniphx\Forrest\Authentications;
 
 use Omniphx\Forrest\Client as BaseAuthentication;
+use Omniphx\Forrest\Exceptions\MissingTokenException;
 use Omniphx\Forrest\Interfaces\UserPasswordInterface;
 
 class UserPassword extends BaseAuthentication implements UserPasswordInterface
 {
+
+    public function checkForExistingValidToken(){
+
+        try{
+            $token = $this->tokenRepo->get();
+
+            return $token;
+        }catch(MissingTokenException $e){
+            return false;
+        }
+
+        return false;
+    }
+
+
+
+
     public function authenticate($url = null)
     {
-        $loginURL = null === $url ? $this->credentials['loginURL'] : $url;
-        $loginURL .= '/services/oauth2/token';
 
-        $authToken = $this->getAuthToken($loginURL);
+        $authToken = $this->checkForExistingValidToken();
 
-        $this->tokenRepo->put($authToken);
+        if(!$authToken){
+            $loginURL = null === $url ? $this->credentials['loginURL'] : $url;
+            $loginURL .= '/services/oauth2/token';
+
+            $authToken = $this->getAuthToken($loginURL);
+
+            $this->tokenRepo->put($authToken);
+        }
 
         $this->storeVersion();
         $this->storeResources();
@@ -47,6 +70,7 @@ class UserPassword extends BaseAuthentication implements UserPasswordInterface
             'username'      => $this->credentials['username'],
             'password'      => $this->credentials['password'],
         ];
+
 
         // \Psr\Http\Message\ResponseInterface
         $response = $this->httpClient->request('post', $url, $parameters);

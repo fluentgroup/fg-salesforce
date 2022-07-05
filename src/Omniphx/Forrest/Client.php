@@ -23,6 +23,7 @@ use Omniphx\Forrest\Formatters\URLEncodedFormatter;
 use Omniphx\Forrest\Formatters\XMLFormatter;
 use Omniphx\Forrest\Formatters\BaseFormatter;
 use Omniphx\Forrest\Formatters\CsvFormatter;
+use Omniphx\Forrest\Interfaces\StorageInterface;
 
 /**
  * API resources.
@@ -108,12 +109,18 @@ abstract class Client
 
     protected $formatter;
 
+
+    protected $storage;
+
     /**
      * Authentication credentials.
      *
      * @var array
      */
-    protected $credentials;
+    protected $credentials = [];
+
+
+    protected $instanceKey = null;
 
     /**
      * Request options.
@@ -149,6 +156,7 @@ abstract class Client
         RepositoryInterface $tokenRepo,
         RepositoryInterface $versionRepo,
         FormatterInterface $formatter,
+        StorageInterface $storage,
         $settings)
     {
         $this->httpClient       = $httpClient;
@@ -163,8 +171,8 @@ abstract class Client
         $this->tokenRepo        = $tokenRepo;
         $this->versionRepo      = $versionRepo;
         $this->formatter        = $formatter;
+        $this->storage          = $storage;
         $this->settings         = $settings;
-        $this->credentials      = $settings['credentials'];
     }
 
     /**
@@ -190,6 +198,12 @@ abstract class Client
         }
     }
 
+    public function setInstanceKey($key) {
+        $this->instanceKey = $key;
+
+        $this->storage->setInstanceKey($this->instanceKey);
+    }
+
     public function setCredentials($credentials) {
         $this->credentials = array_replace_recursive($this->credentials, $credentials);
     }
@@ -201,13 +215,13 @@ abstract class Client
         } else {
             $this->setFormatter($this->settings['defaults']['format']);
         }
-        
+
         if (isset($this->options['headers'])) {
             $this->parameters['headers'] = array_replace_recursive($this->formatter->setHeaders(), $this->options['headers']);
         } else {
             $this->parameters['headers'] = $this->formatter->setHeaders();
         }
-        
+
         if (isset($this->options['body'])) {
             if ($this->parameters['headers']['Content-Type'] == $this->formatter->getDefaultMIMEType()) {
                 $this->parameters['body'] = $this->formatter->setBody($this->options['body']);
@@ -217,7 +231,7 @@ abstract class Client
         } else {
             unset($this->parameters['body']);
         }
-        
+
         if (isset($this->options['query'])) {
             $this->parameters['query'] = http_build_query($this->options['query']);
         } else {
