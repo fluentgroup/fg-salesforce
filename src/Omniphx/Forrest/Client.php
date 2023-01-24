@@ -403,6 +403,14 @@ abstract class Client
         return $identity;
     }
 
+    
+    public function authToken(){
+
+        $token = $this->tokenRepo->get();
+
+        return $token;
+    }
+    
     /**
      * Lists information about organizational limits.
      * Available for API version 29.0 and later.
