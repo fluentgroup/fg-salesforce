@@ -250,6 +250,13 @@ abstract class Client
 
         return $formattedResponse;
     }
+    
+     public function authToken(){
+
+        $token = $this->tokenRepo->get();
+
+        return $token;
+    }
 
     /**
      * GET method call using any custom path.
