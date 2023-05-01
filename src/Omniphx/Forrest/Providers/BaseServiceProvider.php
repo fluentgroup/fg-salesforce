@@ -4,6 +4,7 @@ namespace Omniphx\Forrest\Providers;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
+use Omniphx\Forrest\Authentications\ClientCredentials;
 use Omniphx\Forrest\Authentications\OAuthJWT;
 use Omniphx\Forrest\Authentications\WebServer;
 use Omniphx\Forrest\Authentications\UserPassword;
@@ -82,6 +83,7 @@ abstract class BaseServiceProvider extends ServiceProvider
             // Config options
             $settings = config('forrest');
             $storageType = config('forrest.storage.type');
+            $authType = config('forrest.authentication');
 
 
             // Dependencies
@@ -101,21 +103,41 @@ abstract class BaseServiceProvider extends ServiceProvider
 
             $formatter = new JSONFormatter($tokenRepo, $settings);
 
-            $forrest = new UserPassword(
-                $httpClient,
-                $encryptor,
-                $event,
-                $input,
-                $redirect,
-                $instanceURLRepo,
-                $refreshTokenRepo,
-                $resourceRepo,
-                $stateRepo,
-                $tokenRepo,
-                $versionRepo,
-                $formatter,
-                $storage,
-                $settings);
+            if($authType === 'ClientCredentials'){
+                $forrest = new ClientCredentials(
+                    $httpClient,
+                    $encryptor,
+                    $event,
+                    $input,
+                    $redirect,
+                    $instanceURLRepo,
+                    $refreshTokenRepo,
+                    $resourceRepo,
+                    $stateRepo,
+                    $tokenRepo,
+                    $versionRepo,
+                    $formatter,
+                    $storage,
+                    $settings);
+            }else{
+                $forrest = new UserPassword(
+                    $httpClient,
+                    $encryptor,
+                    $event,
+                    $input,
+                    $redirect,
+                    $instanceURLRepo,
+                    $refreshTokenRepo,
+                    $resourceRepo,
+                    $stateRepo,
+                    $tokenRepo,
+                    $versionRepo,
+                    $formatter,
+                    $storage,
+                    $settings);
+            }
+
+
 
             return $forrest;
         });
