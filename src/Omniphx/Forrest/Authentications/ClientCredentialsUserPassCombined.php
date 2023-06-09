@@ -6,7 +6,7 @@ use Omniphx\Forrest\Client as BaseAuthentication;
 use Omniphx\Forrest\Exceptions\MissingTokenException;
 use Omniphx\Forrest\Interfaces\UserPasswordInterface;
 
-class ClientCredentials extends BaseAuthentication implements UserPasswordInterface
+class ClientCredentialsUserPassCombined extends BaseAuthentication implements UserPasswordInterface
 {
 
     public function checkForExistingValidToken(){
@@ -64,10 +64,16 @@ class ClientCredentials extends BaseAuthentication implements UserPasswordInterf
     private function getAuthToken($url)
     {
         $parameters['form_params'] = [
-            'grant_type'    => 'client_credentials',
+            'grant_type'    => $this->credentials['authMethod'] === 'ClientCredentials' ? 'client_credentials' : 'password',
             'client_id'     => $this->credentials['consumerKey'],
             'client_secret' => $this->credentials['consumerSecret'],
         ];
+
+        if($this->credentials['authMethod'] === 'Username/Password'){
+
+            $parameters['form_params']['username'] = $this->credentials['username'];
+            $parameters['form_params']['password'] = $this->credentials['password'];
+        }
 
         // \Psr\Http\Message\ResponseInterface
         $response = $this->httpClient->request('post', $url, $parameters);
