@@ -29,6 +29,10 @@ class StateRepository implements RepositoryInterface {
         return $this->storage->has('stateOptions');
     }
 
+    public function clear() {
+        return $this->storage->clear('stateOptions');
+    }
+
     private function verify() {
         if ($this->storage->has('stateOptions')) return;
 
