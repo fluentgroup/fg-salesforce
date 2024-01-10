@@ -30,6 +30,10 @@ class ResourceRepository implements ResourceRepositoryInterface
         return $this->storage->get('resources')[$resource];
     }
 
+     public function clear() {
+        return $this->storage->clear('resources');
+    }
+
     private function verify() {
         if ($this->storage->has('resources')) return;
 
