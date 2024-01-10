@@ -203,6 +203,15 @@ abstract class Client
 
         $this->storage->setInstanceKey($this->instanceKey);
     }
+    
+    public function clearAuthCache() {
+
+        $this->tokenRepo->clear();
+        $this->stateRepo->clear();
+        $this->versionRepo->clear();
+        $this->resourceRepo->clear();
+        $this->refreshTokenRepo->clear();
+    }
 
     public function setCredentials($credentials) {
         $this->credentials = array_replace_recursive($this->credentials, $credentials);
