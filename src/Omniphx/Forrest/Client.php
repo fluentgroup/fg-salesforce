@@ -194,6 +194,16 @@ abstract class Client
         $this->credentials = array_replace_recursive($this->credentials, $credentials);
     }
 
+    
+    public function clearAuthCache() {
+
+        $this->tokenRepo->clear();
+        $this->stateRepo->clear();
+        $this->versionRepo->clear();
+        $this->resourceRepo->clear();
+        $this->refreshTokenRepo->clear();
+    }
+
     private function handleRequest()
     {
         if (isset($this->options['format'])) {
