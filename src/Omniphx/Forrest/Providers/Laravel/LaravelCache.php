@@ -62,6 +62,11 @@ class LaravelCache implements StorageInterface
         return cache()->has($this->getStorageKey($key));
     }
 
+    public function clear($key)
+    {
+        return cache()->forget($this->getStorageKey($key));
+    }
+
 
     protected function setSeconds()
     {
