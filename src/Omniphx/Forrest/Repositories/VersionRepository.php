@@ -36,6 +36,11 @@ class VersionRepository implements RepositoryInterface {
         return $this->storage->has('version');
     }
 
+
+    public function clear() {
+        return $this->storage->clear('version');
+    }
+
     private function verify() {
         if ($this->storage->has('version')) return;
 
