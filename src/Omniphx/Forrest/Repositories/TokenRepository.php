@@ -49,6 +49,10 @@ class TokenRepository implements RepositoryInterface {
         return $this->storage->has('token');
     }
 
+    public function clear() {
+        return $this->storage->clear('token');
+    }
+
     private function verify() {
         if ($this->storage->has('token')) return;
 
