@@ -9,3 +9,4 @@ mm.log
 /vin
 /bin
 /tests
+/.claude/settings.local.json
